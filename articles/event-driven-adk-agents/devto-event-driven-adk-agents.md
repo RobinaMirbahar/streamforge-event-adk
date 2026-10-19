@@ -6,7 +6,7 @@ tags: googlecloud, ai, python, opensource
 cover_image: https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/event-driven-adk-agents/cover.0ac849f6.jpg
 ---
 
-This article provides a step by step architectural and deployment guide for **StreamForge**, a real-time event-driven multi-agent pipeline built with the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/), [open-weights Gemma 3 (`gemma3:12b`)](https://ai.google.dev/gemma), [Google Cloud Eventarc](https://cloud.google.com/eventarc/docs), [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs), and [Google Cloud Run](https://cloud.google.com/run/docs).
+This article provides a step by step architectural and deployment guide for **StreamForge**, a real-time event-driven multi-agent pipeline built with the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/), [open-weights Gemma 3 (`gemma3:12b`)](https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma), [Google Cloud Eventarc](https://cloud.google.com/eventarc/docs), [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs), and [Google Cloud Run](https://cloud.google.com/run/docs).
 
 Repository: [github.com/RobinaMirbahar/streamforge-event-adk](https://github.com/RobinaMirbahar/streamforge-event-adk)
 
@@ -371,7 +371,7 @@ Created trigger [streamforge-gcs-release-trigger] in [us-central1].
 - [Google Agent Development Kit (ADK) Documentation](https://google.github.io/adk-docs/)
 - [Google ADK Workflow Agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`)](https://google.github.io/adk-docs/agents/workflow-agents/)
 - [Google ADK Python SDK Repository (`google/adk-python`)](https://github.com/google/adk-python)
-- [Google Gemma Open Models Documentation](https://ai.google.dev/gemma)
+- [Google Gemma Open Models Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma)
 - [Google Cloud Eventarc Documentation](https://cloud.google.com/eventarc/docs)
 - [Google Cloud Run Documentation](https://cloud.google.com/run/docs)
 - [Google Cloud Pub/Sub Push Subscriptions Guide](https://cloud.google.com/pubsub/docs/push)
