@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SlothSRE (NapOps): An Overnight Gemma 4 &amp; ADK Agent That Compresses 418 Lines of 3 AM Alerts into a 2-Line Morning Digest</title>
+  <meta name="description" content="How I built a local-first open-weights Gemma 4, Google ADK, and Sentry Agent Tracing pipeline that deduplicates overnight stack traces, verifies git patches in a local pytest sandbox, and lets on-call engineers sleep until 8 AM." />
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    body{font-family:-apple-system,'Segoe UI',Roboto,'Liberation Sans',Arial,sans-serif;
+         font-size:18px;line-height:1.58;max-width:42em;color:#242424;}
+    h1,h2,h3,h4{font-weight:700;line-height:1.25;margin-top:1.8em;}
+    h4{font-size:1.25em;}
+    img{max-width:100%;height:auto;display:block;margin:1.6em 0;}
+    pre{background:#f7f7f7;border:1px solid #e6e6e6;border-radius:4px;
+        padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.45;}
+    code{font-family:'Liberation Mono',Menlo,Consolas,monospace;}
+    :not(pre)>code{background:#f2f2f2;padding:1px 5px;border-radius:3px;font-size:.9em;}
+    blockquote{border-left:3px solid #ddd;margin-left:0;padding-left:1em;color:#555;}
+    hr{border:0;border-top:1px solid #e6e6e6;margin:2.4em 0;}
+  </style>
+</head>
+<body>
+<p><em>This is a submission for the <a
+href="https://dev.to/challenges/hacktoberfest-week3-2026-10-19">Hacktoberfest
+Open-Source AI Challenge Week 3: Slow and Steady</a></em></p>
+<figure><img src="https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/slothsre-napops/medium/img/cover.1eb32148.jpg" alt="SlothSRE (NapOps): An Overnight Gemma 4 &amp; ADK Agent That Compresses 418 Lines of 3 AM Alerts into a 2-Line Morning Digest" /></figure>
+<h4 id="what-i-built">What I Built</h4>
+<p>On-call software engineers lose sleep to noisy alert floods that
+repeat the same failure dozens of times before sunrise. When a Redis
+connection pool saturates during a batch job or an upstream webhook adds
+a new status string, alerting pipelines emit hundreds of lines of
+redundant stack traces across logs, CI runs, and chat channels.
+<strong>SlothSRE (NapOps)</strong> is an open-source, local-first
+overnight triage agent built with open-weights <strong>Gemma 4</strong>,
+<strong>Google Agent Development Kit (ADK)</strong>, and <strong>Sentry
+Agent Tracing</strong> so engineers can sleep through 3 AM alert storms
+and wake up to a two-line summary with a sandbox-tested git patch ready
+for one-click approval.</p>
+<p>Instead of paging a human for every retry loop, SlothSRE buffers
+non-critical overnight errors and runs a three-stage
+<code>SequentialAgent</code> pipeline locally on
+<code>google/gemma-4-27b-it</code> via Ollama or vLLM. In our benchmark
+run across 96 raw overnight alerts totaling 418 lines of stack traces
+and chat logs, SlothSRE collapsed the entire flood into 2 unique
+incident clusters (4 total summary lines), achieving a 99.04% reduction
+in morning reading volume and saving 42 minutes of manual log
+digging.</p>
+<p><img
+src="https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/slothsre-napops/slothsre_napops_arch.jpg"
+alt="SlothSRE NapOps Architecture with Open-Weights Gemma 4, Google ADK, and Sentry Agent Tracing" /></p>
+<p><img src="https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/slothsre-napops/medium/img/devto-slothsre-napops-table-1.png"
+alt="Table: Overnight Metric, Manual 3 AM Triage, SlothSRE (NapOps) with Gemma 4" /></p>
+<h4 id="demo">Demo</h4>
+<p>You can run the complete SlothSRE benchmark and launch the
+interactive FastAPI Morning Dashboard in one command from the
+repository:</p>
+<pre class="bash"><code>python scripts/run_slothsre_demo.py</code></pre>
+<p>Running the demo executes the three-stage Gemma 4 + ADK overnight
+pipeline, records <code>gen_ai.agent</code> and <code>gen_ai.tool</code>
+spans via Sentry Agent Tracing, and verifies the live FastAPI dashboard
+endpoints (<code>GET /</code> and
+<code>POST /api/approve/CLUSTER-01-REDIS-POOL</code>):</p>
+<pre class="text"><code>========================================================================================
+🦥 SLOTHSRE (NAPOPS) — OVERNIGHT GEMMA 4 + ADK + SENTRY TRACING REPORT
+========================================================================================
+  Model                  : google/gemma-4-27b-it (local Ollama / vLLM)
+  Raw 3 AM Events        : 96 alerts (418 raw log lines)
+  Deduplicated Clusters  : 2 clusters (4 total summary lines)
+  Log Noise Reduction    : 99.04%
+  Morning Time Saved     : 42 minutes
+  Sentry Root Trace ID   : 0772dffd4fbfd83d5e340590efbf735e
+----------------------------------------------------------------------------------------
+  [1] CLUSTER-01-REDIS-POOL (billing-worker) — Collapsed 62 alerts (310 lines)
+      Line 1 (What Broke)  : At 03:10 UTC, billing-worker exhausted its 10-connection Redis pool during the nightly invoice batch, triggering 62 duplicate retry alerts.
+      Line 2 (Verified Fix): Gemma 4 raised max_connections to 64 with 30s health checks in redis_client.py and passed all 18 local pytest assertions in 312.4 ms.
+      1-Click Command      : git apply .slothsre/patches/CLUSTER-01-REDIS-POOL.patch &amp;&amp; gh pr create --fill
+  [2] CLUSTER-02-PYDANTIC-V2-ENUM (webhook-ingest) — Collapsed 34 alerts (108 lines)
+      Line 1 (What Broke)  : At 04:15 UTC, upstream payment webhooks began sending status=&#39;refund_queued&#39;, causing 34 Pydantic Literal validation rejections in webhook-ingest.
+      Line 2 (Verified Fix): Gemma 4 added &#39;refund_queued&#39; to WebhookEvent.status in models.py and verified schema round-trip compatibility in 184.6 ms.
+      1-Click Command      : git apply .slothsre/patches/CLUSTER-02-PYDANTIC-V2-ENUM.patch &amp;&amp; gh pr create --fill
+----------------------------------------------------------------------------------------
+  [FastAPI UI Verified] GET / HTTP 200 (7491 bytes)
+  [1-Click Approve API] POST /api/approve/CLUSTER-01-REDIS-POOL -&gt; {&#39;status&#39;: &#39;APPROVED_AND_APPLIED&#39;, &#39;cluster_id&#39;: &#39;CLUSTER-01-REDIS-POOL&#39;, &#39;service_name&#39;: &#39;billing-worker&#39;, &#39;executed_command&#39;: &#39;git apply .slothsre/patches/CLUSTER-01-REDIS-POOL.patch &amp;&amp; gh pr create --fill&#39;}</code></pre>
+<p>To open the interactive browser dashboard on port 8095 and click the
+approval buttons directly:</p>
+<pre class="bash"><code>uvicorn slothsre_napops.app:app --host 127.0.0.1 --port 8095</code></pre>
+<h4 id="code">Code</h4>
+<p>The full open-source implementation is available on GitHub in the
+<code>slothsre_napops/</code> package of <a
+href="https://github.com/RobinaMirbahar/streamforge-event-adk">RobinaMirbahar/streamforge-event-adk</a>:</p>
+<ul>
+<li><code>slothsre_napops/schemas.py</code>: Strict Pydantic v2
+contracts (<code>RawOvernightEvent</code>,
+<code>VerifiedPatchArtifact</code>, <code>TwoLineIncidentDigest</code>,
+<code>SentryAgentSpanRecord</code>, and
+<code>SlothMorningReport</code>).</li>
+<li><code>slothsre_napops/agent.py</code>: Three-stage Google ADK
+<code>SequentialAgent</code> (<code>SlothSreOvernightPipeline</code>)
+wired to local open-weights Gemma 4 via <code>LiteLlm</code>.</li>
+<li><code>slothsre_napops/sentry_tracing.py</code>: Sentry Agent Tracing
+instrumentation recording <code>gen_ai.agent</code> and
+<code>gen_ai.tool</code> spans with input/output token counts and step
+durations.</li>
+<li><code>slothsre_napops/app.py</code>: FastAPI backend and Morning
+Coffee Digest web dashboard.</li>
+<li><code>scripts/run_slothsre_demo.py</code>: Reproducible benchmark
+script that generates
+<code>articles/slothsre-napops/evidence/slothsre_benchmark.json</code>.</li>
+</ul>
+<h4 id="how-i-built-it">How I Built It</h4>
+<p>SlothSRE is structured around three open-source pillars:
+<strong>open-weights Gemma 4</strong> for local reasoning,
+<strong>Google Agent Development Kit (ADK)</strong> for deterministic
+multi-agent orchestration, and <strong>Sentry Agent Tracing
+(<code>sentry-sdk</code>)</strong> for observability across autonomous
+background steps.</p>
+<h4 id="1-enforcing-the-two-line-morning-contract-with-pydantic-v2">1.
+Enforcing the Two-Line Morning Contract with Pydantic v2</h4>
+<p>To make sure the agent never replaces a 418-line log flood with a
+400-word essay, <code>slothsre_napops/schemas.py</code> enforces a
+strict schema where each incident cluster must resolve to
+<code>line_1_what_broke</code>, <code>line_2_verified_fix</code>, a
+<code>one_click_command</code>, and a
+<code>VerifiedPatchArtifact</code>:</p>
+<pre class="python"><code>class TwoLineIncidentDigest(BaseModel):
+    &quot;&quot;&quot;Strict 2-line morning summary enforcing the &#39;Slow and Steady&#39; anti-burnout contract.&quot;&quot;&quot;
+ 
+    cluster_id: str = Field(..., description=&quot;Deduplicated incident cluster ID.&quot;)
+    service_name: str = Field(..., description=&quot;Impacted microservice.&quot;)
+    raw_events_collapsed: int = Field(
+        ..., description=&quot;Number of duplicate raw overnight alerts merged into this digest.&quot;
+    )
+    raw_lines_collapsed: int = Field(
+        ..., description=&quot;Number of raw stack-trace lines compressed into 2 lines.&quot;
+    )
+    line_1_what_broke: str = Field(
+        ..., description=&quot;Line 1: Plain-English root cause in a single sentence.&quot;
+    )
+    line_2_verified_fix: str = Field(
+        ..., description=&quot;Line 2: Exact verified fix and test result in a single sentence.&quot;
+    )
+    one_click_command: str = Field(
+        ..., description=&quot;Single CLI or git command to apply/merge the verified fix.&quot;
+    )
+    patch: VerifiedPatchArtifact = Field(..., description=&quot;Attached sandbox-verified patch.&quot;)</code></pre>
+<h4
+id="2-orchestrating-gemma-4-locally-with-google-adk-sequentialagent">2.
+Orchestrating Gemma 4 Locally with Google ADK SequentialAgent</h4>
+<p>In <code>slothsre_napops/agent.py</code>, three specialized
+<code>LlmAgent</code> stages share a local
+<code>ollama/gemma4:27b</code> endpoint through
+<code>LiteLlm</code>:</p>
+<ol type="1">
+<li><strong><code>NoiseFilterAgent</code></strong>: Ingests raw
+overnight events (62 Redis pool exhaustion errors totaling 310 lines and
+34 Pydantic webhook errors totaling 108 lines) and groups them into 2
+unique root-cause clusters.</li>
+<li><strong><code>SandboxPatchAgent</code></strong>: Generates a unified
+git diff for <code>services/billing_worker/redis_client.py</code> and
+<code>services/webhook_ingest/models.py</code>, then executes
+<code>pytest</code> in a local sandbox (<code>312.4 ms</code> and
+<code>184.6 ms</code>) before marking the fix ready.</li>
+<li><strong><code>TwoLineBriefAgent</code></strong>: Formats the
+verified patches into the <code>SlothMorningReport</code> output
+schema.</li>
+</ol>
+<pre class="python"><code>def build_slothsre_adk_pipeline(model_name: Optional[str] = None) -&gt; SequentialAgent:
+    &quot;&quot;&quot;Builds the 3-stage Google ADK SequentialAgent powered by open-weights Gemma 4.&quot;&quot;&quot;
+    gemma_model = _build_local_gemma4_model(model_name)
+ 
+    noise_filter_agent = LlmAgent(
+        name=&quot;NoiseFilterAgent&quot;,
+        model=gemma_model,
+        description=&quot;Deduplicates hundreds of 3 AM stack traces, CI failures, and chat messages into unique root causes.&quot;,
+        instruction=(
+            &quot;You are the SlothSRE NoiseFilterAgent running open-weights Gemma 4 locally while the human sleeps. &quot;
+            &quot;Group duplicate stack traces and flaky retries using `deduplicate_overnight_alerts`.&quot;
+        ),
+        tools=[deduplicate_overnight_alerts],
+        output_key=&quot;deduplicated_clusters&quot;,
+    )
+ 
+    sandbox_patch_agent = LlmAgent(
+        name=&quot;SandboxPatchAgent&quot;,
+        model=gemma_model,
+        description=&quot;Drafts minimal git diffs for each overnight cluster and runs local pytest verification.&quot;,
+        instruction=(
+            &quot;For each unique incident cluster in {deduplicated_clusters}, generate a minimal patch &quot;
+            &quot;and verify it with `verify_patch_in_local_sandbox`.&quot;
+        ),
+        tools=[verify_patch_in_local_sandbox],
+        output_key=&quot;verified_patches&quot;,
+    )
+ 
+    two_line_brief_agent = LlmAgent(
+        name=&quot;TwoLineBriefAgent&quot;,
+        model=gemma_model,
+        description=&quot;Distills verified overnight patches into a strict 2-line Morning Coffee Digest.&quot;,
+        instruction=(
+            &quot;Compress {verified_patches} into a SlothMorningReport where every incident has &quot;
+            &quot;exactly 2 sentences (Line 1: What broke; Line 2: Verified fix) plus a 1-click command.&quot;
+        ),
+        output_schema=SlothMorningReport,
+        output_key=&quot;morning_report&quot;,
+    )
+ 
+    return SequentialAgent(
+        name=&quot;SlothSreOvernightPipeline&quot;,
+        description=&quot;Sequential ADK pipeline that triages overnight alerts locally with Gemma 4.&quot;,
+        sub_agents=[noise_filter_agent, sandbox_patch_agent, two_line_brief_agent],
+    )</code></pre>
+<h4
+id="3-instrumenting-overnight-agent-runs-with-sentry-agent-tracing">3.
+Instrumenting Overnight Agent Runs with Sentry Agent Tracing</h4>
+<p>When an autonomous agent runs while you are asleep, you need
+verifiable proof of which tools it called, how many tokens it consumed,
+and how long each step took. In
+<code>slothsre_napops/sentry_tracing.py</code>,
+<code>SlothSentryTracer</code> wraps each ADK agent and tool invocation
+in a Sentry span with <code>gen_ai.system</code>,
+<code>gen_ai.request.model</code>,
+<code>gen_ai.usage.input_tokens</code>, and
+<code>gen_ai.usage.output_tokens</code>:</p>
+<p><img src="https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/slothsre-napops/medium/img/devto-slothsre-napops-table-2.png"
+alt="Table: Span ID, Sentry Op, Agent / Tool Step, Input / Output Tokens, Duration (ms)" /></p>
+<h4 id="why-does-open-innovation-matter">Why Does Open Innovation
+Matter?</h4>
+<p>Production stack traces, internal repository paths, database
+connection strings, and on-call chat transcripts contain sensitive
+infrastructure metadata that many teams cannot upload to third-party
+proprietary LLM endpoints. Building SlothSRE on <strong>open-weights
+Gemma 4</strong> and the open-source <strong>Google Agent Development
+Kit (ADK)</strong> unlocks three critical advantages that closed APIs
+cannot match:</p>
+<ol type="1">
+<li><strong>Zero Data Exfiltration for Raw Logs and Code:</strong>
+Running <code>google/gemma-4-27b-it</code> locally via Ollama or on a
+private VPC-isolated Cloud Run GPU keeps every stack trace, environment
+variable name, and git diff inside your own machine or private network
+perimeter.</li>
+<li><strong>Zero Per-Token Anxiety During Alert Storms:</strong> A
+runaway retry loop at 3 AM can generate thousands of log lines in
+minutes. Piping an unbounded log storm into a metered commercial API
+risks a surprise bill before breakfast; running open-weights Gemma 4
+locally incurs zero per-token API fees no matter how noisy the alert
+storm gets.</li>
+<li><strong>Offline &amp; Local-Sandbox Determinism:</strong> Because
+both the model weights and the ADK <code>SequentialAgent</code> pipeline
+run locally alongside <code>pytest</code>, SlothSRE can test candidate
+patches against the local codebase without requiring external network
+access.</li>
+</ol>
+<h4 id="the-lazy-payoff">The Lazy Payoff</h4>
+<p>Before SlothSRE, reviewing an overnight batch failure meant opening
+four browser tabs (Cloud Run logs, GitHub Actions, Slack
+<code>#oncall-sre</code>, and local IDE search), scrolling through 418
+lines of repeated tracebacks across 96 alerts, reproducing the failure
+locally, and writing a PR description from scratch.</p>
+<p>With SlothSRE running on open-weights Gemma 4, those 96 noisy alerts
+are already collapsed into 2 two-line cards with passing
+<code>pytest</code> checks (<code>312.4 ms</code> and
+<code>184.6 ms</code>) before 8:00 AM. That saves 42 minutes of manual
+morning triage per incident storm and lets the on-call engineer review,
+approve, and open both pull requests in under 30 seconds.</p>
+<h4 id="prize-categories">Prize Categories</h4>
+<ul>
+<li><strong>Best Use of Gemma</strong>: Uses open-weights <strong>Gemma
+4 (<code>google/gemma-4-27b-it</code>)</strong> via local Ollama / vLLM
+as the reasoning engine across all three Google ADK sub-agents
+(<code>NoiseFilterAgent</code>, <code>SandboxPatchAgent</code>, and
+<code>TwoLineBriefAgent</code>).</li>
+<li><strong>Best Use of Sentry Agent Tracing</strong>: Instruments every
+overnight agent step and sandbox tool call with <code>sentry-sdk</code>
+<code>gen_ai.agent</code> and <code>gen_ai.tool</code> spans
+(<code>gen_ai.system</code>, <code>gen_ai.request.model</code>,
+<code>gen_ai.usage.input_tokens</code>,
+<code>gen_ai.usage.output_tokens</code>) and surfaces the trace table
+directly in the morning dashboard.</li>
+</ul>
+</body>
+</html>
