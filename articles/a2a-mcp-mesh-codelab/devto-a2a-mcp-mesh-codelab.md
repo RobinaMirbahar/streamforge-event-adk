@@ -3,7 +3,7 @@ title: "Codelab: Build an Agent-to-Agent (A2A) and Multi-MCP Mesh on Cloud Run w
 published: false
 description: "Step by step Google Cloud Codelab for deploying open-weights Gemma 4 on Cloud Run NVIDIA L4 GPUs and orchestrating a multi-MCP and Agent-to-Agent (A2A) remediation mesh across Cloud Spanner Graph (ISO GQL), AlloyDB pgvector (ScaNN), and GitHub MCP using Google Agent Development Kit (ADK)."
 tags: googlecloud, ai, mcp, opensource
-cover_image: https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/a2a-mcp-mesh-codelab/cover.002d0eee.jpg
+cover_image: https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/a2a-mcp-mesh-codelab/cover.becf9a0f.jpg
 ---
 
 This Codelab provides a step by step deployment and architectural guide for building an **Agent-to-Agent (A2A) and Multi-MCP Mesh** on [Google Cloud Run](https://cloud.google.com/run/docs) powered by [open-weights Gemma 4 (`google/gemma-4-27b-it`)](https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma), the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/), [Cloud Spanner Graph](https://cloud.google.com/spanner/docs/graph/overview), [AlloyDB for PostgreSQL (`pgvector` + `ScaNN`)](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings), and the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction).
