@@ -1,0 +1,12 @@
+Event-driven multi-agent pipelines on Google Cloud with ADK, Gemma 3 & Eventarc
+
+Build a real-time event-driven multi-agent pipeline on Google Cloud using Eventarc, Cloud Pub/Sub, Cloud Run, open-weights Gemma 3, and Google Agent Development Kit (ParallelAgent and LoopAgent).
+
+What is in it:
+
+- 🟢 Concurrent Fan-Out (ParallelAgent): Extracted engineering specs (73.8% latency drop from 145 ms to 38 ms at 250,000 rows/sec), localized copy across 3 locales (en_US, de_DE, ja_JP), and forecasted $2,856,000 in 12-month Net New ARR lift across 340 upgraded accounts (18.5% of 1,840 active Growth Tier accounts at $8,400 annual expansion).
+- 🟢 Self-Correcting Quality Loop (LoopAgent): Detected the €459.08/mo and ¥75,848/mo currency formatting violations on Iteration 1 (quality_score = 0.72), repaired them to €460/mo and ¥75,800/mo, and exited cleanly on Iteration 2 (quality_score = 1.0) via exit_quality_loop().
+- 🟢 At-Least-Once Idempotency: Short-circuited duplicate ce-98104271-gcs-finalized redelivery in < 5 ms with 0 redundant parallel branches or LLM calls.
+
+dev.to (Google Developer Experts): https://dev.to/gde/beyond-chatbots-and-cron-jobs-event-driven-multi-agent-pipelines-on-google-cloud-with-adk-gemma-3-3cbk
+Source: https://github.com/RobinaMirbahar/streamforge-event-adk

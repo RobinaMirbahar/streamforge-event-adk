@@ -190,8 +190,8 @@
 guide for building an <strong>Agent-to-Agent (A2A) and Multi-MCP
 Mesh</strong> on <a href="https://cloud.google.com/run/docs">Google
 Cloud Run</a> powered by <a
-href="https://ai.google.dev/gemma/docs">open-weights Gemma 4
-(<code>google/gemma-4-27b-it</code>)</a>, the <a
+href="https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma">open-weights
+Gemma 4 (<code>google/gemma-4-27b-it</code>)</a>, the <a
 href="https://google.github.io/adk-docs/">Google Agent Development Kit
 (ADK)</a>, <a
 href="https://cloud.google.com/spanner/docs/graph/overview">Cloud
@@ -345,7 +345,7 @@ and <code>--enable-auto-tool-choice</code> enabled on the
   --set-env-vars=&quot;MODEL_ID=/mnt/models/gemma-4-27b-it,MAX_MODEL_LEN=16384,ENABLE_AUTO_TOOL_CHOICE=true,TOOL_CALL_PARSER=pythonic&quot;
 Deploying container to Cloud Run service [gemma4-27b-vllm-service] in project [your-gcp-project-id] region [us-central1]
 Service [gemma4-27b-vllm-service] revision [gemma4-27b-vllm-service-00001-l4g] has been deployed and is serving 100 percent of traffic.
-Service URL: https://gemma4-27b-vllm-service-uc.a.run.app</code></pre>
+Service URL: https://gemma4-27b-vllm-service.run.internal</code></pre>
 <hr />
 <h4
 id="6-step-3--define-the-a2a-discovery-card-and-incident-mesh-schemas">6.
@@ -520,7 +520,7 @@ app = FastAPI(title=&quot;A2A Remote GitHub Remediation Agent&quot;)
  
 AGENT_CARD = A2AAgentCard(
     name=&quot;GitHubRollbackRemediationAgent&quot;,
-    url=&quot;https://github-remediation-a2a-agent-uc.a.run.app&quot;,
+    url=&quot;https://github-remediation-a2a-agent.run.internal&quot;,
     version=&quot;1.0.0&quot;,
     authentication=&quot;google-cloud-run-oidc&quot;,
     skills=[
@@ -556,7 +556,7 @@ def handle_a2a_task_send(payload: Dict[str, Any]) -&gt; Dict[str, Any]:
             &quot;task_status&quot;: &quot;COMPLETED&quot;,
             &quot;delegated_agent&quot;: AGENT_CARD.name,
             &quot;github_mcp_tool_invoked&quot;: &quot;create_pull_request&quot;,
-            &quot;github_rollback_pr_url&quot;: &quot;https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42&quot;,
+            &quot;github_rollback_pr_url&quot;: &quot;https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main&quot;,
             &quot;reverted_commit_sha&quot;: failing_sha,
             &quot;target_service&quot;: target_service,
             &quot;proposed_rollout_strategy&quot;: &quot;IMMEDIATE_100_PERCENT_CUTOVER&quot;,
@@ -684,7 +684,7 @@ Model: google/gemma-4-27b-it (Cloud Run L4 GPU + GCS FUSE) | Protocol: A2A + Fas
 [STEP 1] Executing ADK ParallelAgent (ConcurrentMultiMCPAndA2AFanOut)...
   * Branch 1 (Spanner Graph MCP)  : 3-hop GQL returned 3 downstream services, 42 tenants ($184,000/hr SLA risk) in 11.4 ms
   * Branch 2 (AlloyDB Vector MCP) : ScaNN index matched RB-SPANNER-GRPC-POOL-204 (similarity=0.964) in 6.8 ms
-  * Branch 3 (Remote A2A Agent)   : Discovered GitHubRollbackRemediationAgent via /.well-known/agent.json -&gt; PR https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42
+  * Branch 3 (Remote A2A Agent)   : Discovered GitHubRollbackRemediationAgent via /.well-known/agent.json -&gt; PR https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main
  
 [STEP 2] Executing ADK LoopAgent (MeshRemediationSafetyLoop)...
 [
@@ -719,7 +719,7 @@ Model: google/gemma-4-27b-it (Cloud Run L4 GPU + GCS FUSE) | Protocol: A2A + Fas
   ],
   &quot;matched_runbook_id&quot;: &quot;RB-SPANNER-GRPC-POOL-204&quot;,
   &quot;a2a_delegated_agent&quot;: &quot;GitHubRollbackRemediationAgent&quot;,
-  &quot;github_rollback_pr_url&quot;: &quot;https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42&quot;,
+  &quot;github_rollback_pr_url&quot;: &quot;https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main&quot;,
   &quot;rollout_strategy&quot;: &quot;CANARY_10_50_100_TRAFFIC_SPLIT&quot;,
   &quot;loop_iterations_completed&quot;: 2,
   &quot;final_safety_score&quot;: 1.0,
@@ -757,8 +757,9 @@ ADK Workflow Agents (<code>SequentialAgent</code>,
 <code>ParallelAgent</code>, <code>LoopAgent</code>)</a></li>
 <li><a href="https://google.github.io/adk-docs/tools/mcp-tools/">Google
 ADK Model Context Protocol (<code>MCPToolset</code>) Guide</a></li>
-<li><a href="https://ai.google.dev/gemma/docs">Google Gemma Open Models
-Documentation</a></li>
+<li><a
+href="https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma">Google
+Gemma Open Models Documentation</a></li>
 <li><a
 href="https://cloud.google.com/run/docs/configuring/services/gpu">Google
 Cloud Run GPU Configuration Guide (<code>NVIDIA L4</code>)</a></li>
@@ -794,7 +795,8 @@ microservices, <code>42</code> impacted enterprise tenants, and
 <code>$184,000/hr</code> SLA exposure), matched AlloyDB
 <code>pgvector</code> <code>ScaNN</code> runbook
 <code>RB-SPANNER-GRPC-POOL-204</code> (<code>0.964</code> similarity) in
-<code>6.8 ms</code>, and delegated PR creation (<code>pull/42</code>) to
+<code>6.8 ms</code>, and delegated PR creation
+(<code>commits/main</code>) to
 <code>GitHubRollbackRemediationAgent</code> via A2A
 <code>tasks/send</code>.</li>
 <li>🟢 <strong>Self-Correcting Blast-Radius Gate

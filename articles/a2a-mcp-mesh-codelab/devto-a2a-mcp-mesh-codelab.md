@@ -6,7 +6,7 @@ tags: googlecloud, ai, mcp, opensource
 cover_image: https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/a2a-mcp-mesh-codelab/cover.66567dab.jpg
 ---
 
-This Codelab provides a step by step deployment and architectural guide for building an **Agent-to-Agent (A2A) and Multi-MCP Mesh** on [Google Cloud Run](https://cloud.google.com/run/docs) powered by [open-weights Gemma 4 (`google/gemma-4-27b-it`)](https://ai.google.dev/gemma/docs), the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/), [Cloud Spanner Graph](https://cloud.google.com/spanner/docs/graph/overview), [AlloyDB for PostgreSQL (`pgvector` + `ScaNN`)](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings), and the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction).
+This Codelab provides a step by step deployment and architectural guide for building an **Agent-to-Agent (A2A) and Multi-MCP Mesh** on [Google Cloud Run](https://cloud.google.com/run/docs) powered by [open-weights Gemma 4 (`google/gemma-4-27b-it`)](https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma), the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/), [Cloud Spanner Graph](https://cloud.google.com/spanner/docs/graph/overview), [AlloyDB for PostgreSQL (`pgvector` + `ScaNN`)](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings), and the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction).
 
 Repository: [github.com/RobinaMirbahar/streamforge-event-adk](https://github.com/RobinaMirbahar/streamforge-event-adk)
 
@@ -114,7 +114,7 @@ gcloud run deploy gemma4-27b-vllm-service \
   --set-env-vars="MODEL_ID=/mnt/models/gemma-4-27b-it,MAX_MODEL_LEN=16384,ENABLE_AUTO_TOOL_CHOICE=true,TOOL_CALL_PARSER=pythonic"
 Deploying container to Cloud Run service [gemma4-27b-vllm-service] in project [your-gcp-project-id] region [us-central1]
 Service [gemma4-27b-vllm-service] revision [gemma4-27b-vllm-service-00001-l4g] has been deployed and is serving 100 percent of traffic.
-Service URL: https://gemma4-27b-vllm-service-uc.a.run.app
+Service URL: https://gemma4-27b-vllm-service.run.internal
 ```
 
 ---
@@ -279,7 +279,7 @@ app = FastAPI(title="A2A Remote GitHub Remediation Agent")
 
 AGENT_CARD = A2AAgentCard(
     name="GitHubRollbackRemediationAgent",
-    url="https://github-remediation-a2a-agent-uc.a.run.app",
+    url="https://github-remediation-a2a-agent.run.internal",
     version="1.0.0",
     authentication="google-cloud-run-oidc",
     skills=[
@@ -315,7 +315,7 @@ def handle_a2a_task_send(payload: Dict[str, Any]) -> Dict[str, Any]:
             "task_status": "COMPLETED",
             "delegated_agent": AGENT_CARD.name,
             "github_mcp_tool_invoked": "create_pull_request",
-            "github_rollback_pr_url": "https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42",
+            "github_rollback_pr_url": "https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main",
             "reverted_commit_sha": failing_sha,
             "target_service": target_service,
             "proposed_rollout_strategy": "IMMEDIATE_100_PERCENT_CUTOVER",
@@ -424,7 +424,7 @@ Model: google/gemma-4-27b-it (Cloud Run L4 GPU + GCS FUSE) | Protocol: A2A + Fas
 [STEP 1] Executing ADK ParallelAgent (ConcurrentMultiMCPAndA2AFanOut)...
   * Branch 1 (Spanner Graph MCP)  : 3-hop GQL returned 3 downstream services, 42 tenants ($184,000/hr SLA risk) in 11.4 ms
   * Branch 2 (AlloyDB Vector MCP) : ScaNN index matched RB-SPANNER-GRPC-POOL-204 (similarity=0.964) in 6.8 ms
-  * Branch 3 (Remote A2A Agent)   : Discovered GitHubRollbackRemediationAgent via /.well-known/agent.json -> PR https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42
+  * Branch 3 (Remote A2A Agent)   : Discovered GitHubRollbackRemediationAgent via /.well-known/agent.json -> PR https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main
 
 [STEP 2] Executing ADK LoopAgent (MeshRemediationSafetyLoop)...
 [
@@ -459,7 +459,7 @@ Model: google/gemma-4-27b-it (Cloud Run L4 GPU + GCS FUSE) | Protocol: A2A + Fas
   ],
   "matched_runbook_id": "RB-SPANNER-GRPC-POOL-204",
   "a2a_delegated_agent": "GitHubRollbackRemediationAgent",
-  "github_rollback_pr_url": "https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42",
+  "github_rollback_pr_url": "https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main",
   "rollout_strategy": "CANARY_10_50_100_TRAFFIC_SPLIT",
   "loop_iterations_completed": 2,
   "final_safety_score": 1.0,
@@ -493,7 +493,7 @@ Deployment complete: Cloud Run A2A & Multi-MCP Mesh is active in us-central1.
 - [Google Agent Development Kit (ADK) Official Documentation](https://google.github.io/adk-docs/)
 - [Google ADK Workflow Agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`)](https://google.github.io/adk-docs/agents/workflow-agents/)
 - [Google ADK Model Context Protocol (`MCPToolset`) Guide](https://google.github.io/adk-docs/tools/mcp-tools/)
-- [Google Gemma Open Models Documentation](https://ai.google.dev/gemma/docs)
+- [Google Gemma Open Models Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma)
 - [Google Cloud Run GPU Configuration Guide (`NVIDIA L4`)](https://cloud.google.com/run/docs/configuring/services/gpu)
 - [Google Cloud Spanner Graph (`ISO GQL`) Overview](https://cloud.google.com/spanner/docs/graph/overview)
 - [Google Cloud AlloyDB AI & `pgvector` `ScaNN` Index Documentation](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings)
@@ -505,7 +505,7 @@ Deployment complete: Cloud Run A2A & Multi-MCP Mesh is active in us-central1.
 
 The goal of this Codelab was to build and verify a multi-protocol Agent-to-Agent (A2A) and Multi-MCP Mesh on Google Cloud Run using open-weights Gemma 4 (`google/gemma-4-27b-it`), the Google Agent Development Kit (ADK), Cloud Spanner Graph, and AlloyDB for PostgreSQL. The key to the solution was pairing vertical `FastMCP` SSE tool servers with horizontal `/.well-known/agent.json` A2A task delegation inside a 3-branch `ParallelAgent` fan-out governed by an iterative `LoopAgent` safety critic. The verification results were:
 
-- 🟢 **Concurrent Multi-MCP and A2A Fan-Out (`ParallelAgent`):** Executed a 3-hop `ISO GQL` traversal on Cloud Spanner Graph in `11.4 ms` (identifying `3` downstream microservices, `42` impacted enterprise tenants, and `$184,000/hr` SLA exposure), matched AlloyDB `pgvector` `ScaNN` runbook `RB-SPANNER-GRPC-POOL-204` (`0.964` similarity) in `6.8 ms`, and delegated PR creation (`pull/42`) to `GitHubRollbackRemediationAgent` via A2A `tasks/send`.
+- 🟢 **Concurrent Multi-MCP and A2A Fan-Out (`ParallelAgent`):** Executed a 3-hop `ISO GQL` traversal on Cloud Spanner Graph in `11.4 ms` (identifying `3` downstream microservices, `42` impacted enterprise tenants, and `$184,000/hr` SLA exposure), matched AlloyDB `pgvector` `ScaNN` runbook `RB-SPANNER-GRPC-POOL-204` (`0.964` similarity) in `6.8 ms`, and delegated PR creation (`commits/main`) to `GitHubRollbackRemediationAgent` via A2A `tasks/send`.
 - 🟢 **Self-Correcting Blast-Radius Gate (`LoopAgent`):** Intercepted the unsafe `IMMEDIATE_100_PERCENT_CUTOVER` rollout on Iteration `1` (`safety_score = 0.68`), enforced the `CANARY_10_50_100_TRAFFIC_SPLIT` policy required for incidents exceeding `10` enterprise tenants, and escalated loop termination cleanly on Iteration `2` (`safety_score = 1.0`).
 - 🟢 **Zero-Trust Serverless GPU Architecture:** Isolated `google/gemma-4-27b-it` inference on a private Cloud Run `NVIDIA L4` (`24 GB`) service (`8 vCPU`, `32 GiB` memory, `16384` max context length) mounted via read-only Cloud Storage FUSE over Direct VPC Egress (`private-ranges-only`).
 

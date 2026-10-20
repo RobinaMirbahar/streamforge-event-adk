@@ -7,7 +7,7 @@ app = FastAPI(title="A2A Remote GitHub Remediation Agent")
 
 AGENT_CARD = A2AAgentCard(
     name="GitHubRollbackRemediationAgent",
-    url="https://github-remediation-a2a-agent-uc.a.run.app",
+    url="https://github-remediation-a2a-agent.run.internal",
     version="1.0.0",
     authentication="google-cloud-run-oidc",
     skills=[
@@ -43,7 +43,7 @@ def handle_a2a_task_send(payload: Dict[str, Any]) -> Dict[str, Any]:
             "task_status": "COMPLETED",
             "delegated_agent": AGENT_CARD.name,
             "github_mcp_tool_invoked": "create_pull_request",
-            "github_rollback_pr_url": "https://github.com/RobinaMirbahar/streamforge-event-adk/pull/42",
+            "github_rollback_pr_url": "https://github.com/RobinaMirbahar/streamforge-event-adk/commits/main",
             "reverted_commit_sha": failing_sha,
             "target_service": target_service,
             "proposed_rollout_strategy": "IMMEDIATE_100_PERCENT_CUTOVER",

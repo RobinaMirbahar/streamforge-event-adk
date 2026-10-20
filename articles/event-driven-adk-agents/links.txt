@@ -1,0 +1,2 @@
+devto-gde = https://dev.to/gde/beyond-chatbots-and-cron-jobs-event-driven-multi-agent-pipelines-on-google-cloud-with-adk-gemma-3-3cbk
+repo = https://github.com/RobinaMirbahar/streamforge-event-adk

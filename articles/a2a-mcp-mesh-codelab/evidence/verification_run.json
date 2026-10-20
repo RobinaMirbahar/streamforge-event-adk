@@ -41,7 +41,7 @@
     "jsonrpc_version": "2.0",
     "agent_card_version": "1.0.0",
     "task_id": "a2a-task-9041",
-    "pull_request": "pull/42"
+    "pull_request": "commits/main"
   },
   "loop_agent": {
     "max_iterations": 3,
