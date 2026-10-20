@@ -1,0 +1,52 @@
+{
+  "codelab": "Cloud Run A2A & Multi-MCP Mesh with Google ADK, Gemma 4, Spanner Graph & AlloyDB",
+  "runtime": {
+    "python_versions": ["3.10+", "3.11", "3.12"],
+    "gcloud_cli_version": "495.0.0+",
+    "packages": ["google-adk>=1.0.0", "mcp>=1.2.0", "pydantic>=2.0.0"],
+    "gpu": {
+      "model": "NVIDIA L4",
+      "vram_gb": "24 GB",
+      "cpu": "8 vCPU",
+      "memory": "32 GiB",
+      "min_instances": 0,
+      "max_instances": 3,
+      "concurrency": 16,
+      "max_model_len": 16384,
+      "model_id": "google/gemma-4-27b-it",
+      "container_image": "us-docker.pkg.dev/vertex-ai/vertex-vision-model-garden-dockers/pytorch-vllm-serve:202604"
+    },
+    "mcp_services": {
+      "cpu": "2 vCPU",
+      "memory": "2 GiB",
+      "coordinator_memory": "4 GiB"
+    }
+  },
+  "spanner_graph_mcp": {
+    "hops": 3,
+    "impacted_services_count": 3,
+    "impacted_enterprise_tenants": 42,
+    "tenant_canary_threshold": 10,
+    "sla_breach_risk_usd_per_hr": "$184,000/hr",
+    "query_latency_ms": "11.4 ms",
+    "failing_commit_sha": "8f4d2a1c9e7b"
+  },
+  "alloydb_vector_mcp": {
+    "runbook_id": "RB-SPANNER-GRPC-POOL-204",
+    "similarity_score": 0.964,
+    "scann_query_latency_ms": "6.8 ms",
+    "canary_stages": "10% -> 50% -> 100%"
+  },
+  "a2a_protocol": {
+    "jsonrpc_version": "2.0",
+    "agent_card_version": "1.0.0",
+    "task_id": "a2a-task-9041",
+    "pull_request": "pull/42"
+  },
+  "loop_agent": {
+    "max_iterations": 3,
+    "iteration_1_score": 0.68,
+    "iteration_2_score": 1.0,
+    "iterations_completed": 2
+  }
+}
