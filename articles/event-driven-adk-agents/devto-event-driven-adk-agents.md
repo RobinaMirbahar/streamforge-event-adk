@@ -3,7 +3,7 @@ title: "Beyond Chatbots and Cron Jobs: Event-Driven Multi-Agent Pipelines on Goo
 published: false
 description: "Build a real-time event-driven multi-agent pipeline on Google Cloud using Eventarc, Cloud Pub/Sub, Cloud Run, open-weights Gemma 3, and Google Agent Development Kit (ParallelAgent and LoopAgent)."
 tags: googlecloud, ai, python, opensource
-cover_image: https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/event-driven-adk-agents/cover.0ac849f6.jpg
+cover_image: https://raw.githubusercontent.com/RobinaMirbahar/streamforge-event-adk/main/articles/event-driven-adk-agents/cover.7d482ff7.jpg
 ---
 
 This article provides a step by step architectural and deployment guide for **StreamForge**, a real-time event-driven multi-agent pipeline built with the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/), [open-weights Gemma 3 (`gemma3:12b`)](https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma), [Google Cloud Eventarc](https://cloud.google.com/eventarc/docs), [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs), and [Google Cloud Run](https://cloud.google.com/run/docs).
