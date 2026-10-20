@@ -1,0 +1,43 @@
+steps:
+  # Step 1: Install Google ADK and Multi-LoRA evaluation dependencies
+  - name: "python:3.12-slim"
+    id: "run-adk-eval-gate"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        pip install --no-cache-dir -r requirements.txt
+        python scripts/run_multilora_adk_eval.py
+        adk eval multilora_adk_eval multilora_adk_eval/golden_eval_set.json \
+          --config_file_path=multilora_adk_eval/eval_config.json \
+          --print_detailed_results
+
+  # Step 2: Deploy new ADK revision with --no-traffic first
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: "deploy-canary-no-traffic"
+    waitFor: ["run-adk-eval-gate"]
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "adk-multilora-coordinator"
+      - "--source=."
+      - "--region=${_REGION}"
+      - "--no-traffic"
+      - "--tag=eval-verified-${SHORT_SHA}"
+
+  # Step 3: Shift 100% of production traffic only after adk eval passes
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: "promote-traffic-100"
+    waitFor: ["deploy-canary-no-traffic"]
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "services"
+      - "update-traffic"
+      - "adk-multilora-coordinator"
+      - "--region=${_REGION}"
+      - "--to-tags=eval-verified-${SHORT_SHA}=100"
+
+substitutions:
+  _REGION: "us-central1"
