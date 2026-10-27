@@ -7,6 +7,47 @@
 
 ![Cover Banner: Beyond Chatbots & Cron — Event-Driven ADK Agents on Google Cloud](./assets/eventdriven_adk_cover_banner.jpg)
 
+> **Author & Architect:** [Robina Mirbahar](https://github.com/RobinaMirbahar) (Google Developer Expert in Cloud & AI)  
+> **Focus:** Orchestrating Google ADK (`ParallelAgent` & `LoopAgent`), Open-Weights Gemma 4, Eventarc, Cloud Pub/Sub & Cloud Run
+
+---
+
+## 🎯 Why I Built StreamForge — Real-Time Event-Driven Multi-Agent Pipelines (Engineering Purpose & Real-World Value)
+
+### 1. ⚡ Moving AI Agents Beyond Synchronous Chat Request/Response
+Real enterprise workloads arrive as asynchronous cloud events—storage uploads, webhook alerts, and streaming telemetry. I architected StreamForge to trigger Google ADK multi-agent pipelines directly from Cloud Pub/Sub and Eventarc.
+
+### 2. 🔄 Combining `ParallelAgent` Fan-Out with `LoopAgent` Self-Correction
+My pipeline uses ADK's `ParallelAgent` to run concurrent security, schema, and sentiment analyzers in parallel, followed by a `LoopAgent` critic that iteratively refines outputs until deterministic quality gates pass.
+
+### 3. ☁️ Elastic Scale-to-Zero Workers on Google Cloud Run
+Each event batch scales Cloud Run worker instances automatically and drops back to zero when the queue drains.
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Events ["1. Google Cloud Event Ingestion"]
+        E_Pub["Cloud Pub/Sub Topic"]
+        E_Arc["Eventarc Trigger (Cloud Storage / Audit Logs)"]
+    end
+    subgraph ADK ["2. StreamForge ADK Runtime (Cloud Run)"]
+        P_Agent["ParallelAgent: Concurrent Triage Fan-Out"]
+        P_Sub1["Security & PII Scanner Sub-Agent"]
+        P_Sub2["Telemetry & Anomaly Sub-Agent"]
+        L_Agent["LoopAgent: Critic & Schema Refinement Loop"]
+    end
+    subgraph Sink ["3. Verified Downstream Sinks"]
+        S_BQ["BigQuery Analytics & Firestore State"]
+    end
+    E_Pub & E_Arc --> P_Agent
+    P_Agent --> P_Sub1 & P_Sub2 --> L_Agent --> S_BQ
+```
+
+---
+
 **StreamForge** is an end-to-end reference architecture for building **real-time, event-driven multi-agent pipelines** on **Google Cloud**—replacing both manual chat prompts and polling cron jobs with **Google Cloud Eventarc**, **Cloud Pub/Sub**, **Google Agent Development Kit (`ParallelAgent` + `LoopAgent` + `SequentialAgent`)**, and **open-weights Gemma 3 (`gemma3:12b`)** on **Cloud Run**.
 
 Whenever a product engineering or catalog release file lands in **Google Cloud Storage** (`google.cloud.storage.object.v1.finalized`), **Eventarc** pushes a CNCF **CloudEvent** to a private **Cloud Run** service that orchestrates:
