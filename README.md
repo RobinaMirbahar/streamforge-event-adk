@@ -1,9 +1,9 @@
 # StreamForge: Real-Time Event-Driven Multi-Agent Pipeline (`Google ADK ParallelAgent & LoopAgent` + `Gemma 3` + `Eventarc` + `Pub/Sub` + `Cloud Run`)
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Google ADK](https://img.shields.io/badge/Google-Agent%20Development%20Kit-4285F4?logo=googlecloud&logoColor=white)](https://google.github.io/adk-docs/)
-[![Model: Gemma 3](https://img.shields.io/badge/Open%20Weights-Gemma%203-34A853?logo=google&logoColor=white)](https://ai.google.dev/gemma)
-[![Trigger: Eventarc CloudEvents](https://img.shields.io/badge/Eventarc-CloudEvents%20%2B%20Pub%2FSub-FBBC04?logo=googlecloud&logoColor=black)](https://cloud.google.com/eventarc/docs)
+[![Google ADK](https://img.shields.io/badge/Google-Agent%20Development%20Kit-4285F4?logo=googlecloud&logoColor=white)](https://google.github.io/adk-docs/?utm_campaign=deveco_gdemembers&utm_source=deveco)
+[![Model: Gemma 3](https://img.shields.io/badge/Open%20Weights-Gemma%203-34A853?logo=google&logoColor=white)](https://ai.google.dev/gemma?utm_campaign=deveco_gdemembers&utm_source=deveco)
+[![Trigger: Eventarc CloudEvents](https://img.shields.io/badge/Eventarc-CloudEvents%20%2B%20Pub%2FSub-FBBC04?logo=googlecloud&logoColor=black)](https://cloud.google.com/eventarc/docs?utm_campaign=deveco_gdemembers&utm_source=deveco)
 
 ![Cover Banner: Beyond Chatbots & Cron — Event-Driven ADK Agents on Google Cloud](./assets/eventdriven_adk_cover_banner.jpg)
 
@@ -99,7 +99,7 @@ bash deploy/deploy_eventarc_adk.sh
 
   [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/robinamirbahar)
   [![Amazon Book](https://img.shields.io/badge/Amazon-Book%20(2026)-FF9900?style=for-the-badge&logo=amazon&logoColor=white)](https://amazon.com/dp/B0GWCZWCF4)
-  [![Google Developer](https://img.shields.io/badge/Google%20Developer-Profile-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://developers.google.com/profile/u/106918534005910641104)
+  [![Google Developer](https://img.shields.io/badge/Google%20Developer-Profile-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://developers.google.com/profile/u/106918534005910641104?utm_campaign=deveco_gdemembers&utm_source=deveco)
   [![DEV Community](https://img.shields.io/badge/DEV-Articles-0A0A0A?style=for-the-badge&logo=devdotto&logoColor=white)](https://dev.to/robinamirbahar)
   [![Medium](https://img.shields.io/badge/Medium-Blog-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@robinamirbahar)
   [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@robinacodesai)
