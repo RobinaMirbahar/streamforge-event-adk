@@ -9,7 +9,7 @@
 
 > **Author & Architect:** [Robina Mirbahar](https://github.com/RobinaMirbahar) ([Google Developer Expert in Cloud & AI](https://developers.google.com/profile/u/106918534005910641104?utm_campaign=deveco_gdemembers&utm_source=deveco) · Google Cloud Champion Innovator · Co-Author of [*AI Engineering*](https://www.amazon.com/dp/B0GWCZWCF4))  
 > 📚 **Companion Publications:** [Medium (Google Cloud) Featured Article](https://medium.com/google-cloud/beyond-chatbots-and-cron-jobs-event-driven-multi-agent-pipelines-on-google-cloud-with-adk-gemma-3-404edf88dd00) · [DEV.to (@gde) Article](https://dev.to/gde/beyond-chatbots-and-cron-jobs-event-driven-multi-agent-pipelines-on-google-cloud-with-adk-gemma-3-3cbk)  
-> **Focus:** Orchestrating Google ADK (`ParallelAgent` & `LoopAgent`), Open-Weights Gemma 4, Eventarc, Cloud Pub/Sub & Cloud Run
+> **Core Stack:** [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/?utm_campaign=deveco_gdemembers&utm_source=deveco) (ParallelAgent & LoopAgent), Open-Weights [Google Gemma](https://ai.google.dev/gemma?utm_campaign=deveco_gdemembers&utm_source=deveco), Google Cloud Eventarc, Cloud Pub/Sub, and [Google Cloud Run](https://cloud.google.com/run/docs?utm_campaign=deveco_gdemembers&utm_source=deveco).
 
 ---
 
