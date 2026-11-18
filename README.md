@@ -45,18 +45,6 @@ flowchart TD
     end
     E_Pub & E_Arc --> P_Agent
     P_Agent --> P_Sub1 & P_Sub2 --> L_Agent --> S_BQ
-    style Events fill:#fce7f3,stroke:#db2777,stroke-width:2px,color:#831843
-    style E_Pub fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
-    style E_Arc fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
-    style Trigger fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#581c87
-    style ADK fill:#fce7f3,stroke:#db2777,stroke-width:2px,color:#831843
-    style Runtime fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
-    style P_Agent fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
-    style P_Sub1 fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#581c87
-    style P_Sub2 fill:#fce7f3,stroke:#db2777,stroke-width:2px,color:#831843
-    style L_Agent fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
-    style Sink fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
-    style S_BQ fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#581c87
 ```
 
 ---
